@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;1,200&family=Roboto:wght@400;500&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--main-f-1);
+}
+
+:root{
+    font-family: var(--main-f-2);
+
+    /* Fonts  */
+    --main-f-1: 'Roboto', sans-serif ;
+    --main-f-2: 'Poppins', sans-serif;
+
+    /* Buttons  */
+    --main-btn-primary: ;
+    --main-btn-secondary: ;
+
+    /* Text colors  */
+    /* --main-col-1: rgb(164, 160, 224); */
+    --main-col-1: salmon;
+
+    /* Backgrounds  */
+    --main-bg-primary: rgb(204, 233, 204);
+    --main-bg-secondary: rgb(243, 230, 230);
+
+}
+
+
+/* Fonts Classes */
+.f-1{ /* For heading , highlights or something noticable*/
+    font-family: var(--main-f-1);
+}
+.f-2{ /* For all overs paragraphs or can say linear font*/
+    font-family: var(--main-f-2);
+}
+.text-highlight{
+    color: var(--main-col-1);
+    font-weight: bold;
+}
+
+/* Buttons Classes */
+/* .btn-primary{
+    background: var(--main-bg-primary) !important;
+}:hover{
+    background: var(--main-btn-primary) !important;
+} */
+.btn-secondary{
+
+}
+
+/* Backgrounds Classes */
+.bg-primary{
+
+}
+.bg-secondary{
+
+}
+
+/* Use the property for text (heading,paragraphs) can be provide the margin and padding context of the parent div  */
+.headingPara{
+    margin: 35px 12px ;
+    padding: 5px 4px;
+}
