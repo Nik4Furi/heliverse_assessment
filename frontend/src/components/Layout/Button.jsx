@@ -1,13 +1,14 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import Loading from './Loading'
 
-const Button = ({ title, type = 'button', handleClick, btnmsg = '', disabled = false, w = 'full' }) => {
+const Button = ({ title, type = 'button', handleClick, btnmsg = '', disabled = false, w = 'full',loading=false,color="indigo-600",hover="indigo-700",disabledCol="indigo-300",disabledHoverCol='indigo-400' }) => {
     return (
         <>
-            <button type={type} title={btnmsg} disabled={disabled} className={`group relative w-${w} flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white
+            <button  type={type} title={btnmsg} disabled={disabled} className={`group relative w-${w} flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white
             
-            ${disabled ? `bg-indigo-300 hover:bg-indigo-400 focus:ring-indigo-300` : `bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500`} focus:outline-none focus:ring-2 focus:ring-offset-2  cursor-pointer`} onClick={handleClick} >
-                {title}
+            ${disabled ? `bg-${disabledCol} hover:bg-${disabledHoverCol} focus:ring-${disabledCol}` : `bg-${color} hover:bg-${hover} focus:ring-${color}`} focus:outline-none focus:ring-2 focus:ring-offset-2  cursor-pointer`} onClick={handleClick} >
+              {loading ? <Loading /> : title}
             </button>
         </>
     )

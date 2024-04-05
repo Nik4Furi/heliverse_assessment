@@ -15,7 +15,7 @@ function AuthControllers() {
 
     return {
 
-        // Register the users, using POST '/api/user/register'
+        // Register the users, using POST '/api/users/register'
         async Register(req, res) {
 
             try {
@@ -64,7 +64,7 @@ function AuthControllers() {
 
                 const token = await jwt.sign(payloads, Secret_Key, { expiresIn: '10d' })
 
-                return res.status(200).json({ success: true, msg: 'You are successfully register', users, token });
+                return res.status(200).json({ success: true, msg: `Welcome ${users?.first_name} @heliverse`, users, token });
 
             } catch (error) { return res.status(500).json({ success: false, msg: error.message }); }
         },
@@ -94,7 +94,7 @@ function AuthControllers() {
 
                 const token = await jwt.sign(payloads, Secret_Key, { expiresIn: '10d' })
 
-                return res.status(200).json({ success: true, msg: 'You are successfully login', token, users });
+                return res.status(200).json({ success: true, msg: `Welcome back ${users?.first_name}`, token, users });
 
             } catch (error) { return res.status(500).json({ success: false, msg: error.message }); }
         },

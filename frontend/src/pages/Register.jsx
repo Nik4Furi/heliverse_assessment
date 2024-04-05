@@ -1,10 +1,18 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { handleRegisterUser } from '../../Store/UsersSlice';
+import FormInputBox from '../components/Layout/FormInputBox';
+import toast from 'react-hot-toast';
+import { useDispatch, useSelector } from 'react-redux';
+import Button from '../components/Layout/Button';
 
 const Register = () => {
 
-    const [form, setForm] = useState({ first_name: '', last_name: '', email: '', password: '', cpassword: '', domain: '', gender: '', available: false });
-    const [file, setFile] = useState(null);
+    const dispatch = useDispatch();
+    const {loading} = useSelector(state => state.user);
+
+    const [form, setForm] = useState({ first_name: '', last_name: '', email: '', password: '', cpassword: '', domain: '', gender: 'Male', available: false });
+    const [file, setFile] = useState('');
     const [avatar, setAvatarSrc] = useState('')
 
     const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
@@ -12,24 +20,51 @@ const Register = () => {
         setFile(e.target.files[0])
 
         const file = e.target.files[0];
-        // console.log(file);
         if (file) {
             setAvatarSrc(URL.createObjectURL(file));
         }
     };
 
-
-    const handleSubmit = (e) => {
+    //---------- Function to submit the form data or can say login the users 
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log(form, file);
+        const { password, cpassword } = form;
 
+        if (password !== cpassword) {
+            toast.error("Password and confirm password didn't match");
+            setForm({ ...form, password: '', cpassword: '' })
+            return;
+        }
+
+        if (file === undefined || file === null || !file) {
+            toast.error("Neccessary to upload profile picture")
+            setFile('');
+            return;
+        }
+
+        const myForm = new FormData();;
+        myForm.append('first_name', form.first_name);
+        myForm.append('last_name', form.last_name);
+        myForm.append('email', form.email);
+        myForm.append('gender', form.gender);
+        myForm.append('domain', form.domain);
+        myForm.append('available', form.available);
+        myForm.append('password', form.password);
+        myForm.append('cpassword', form.cpassword);
+        myForm.append('file', file);
+
+        dispatch(handleRegisterUser(myForm));
+
+
+        setForm({ first_name: '', last_name: '', email: '', password: '', cpassword: '', domain: '', available: false, gender: '' });
+        setAvatarSrc('');
     }
 
     return (
         <>
             <main id="Register">
-                <section className="mx-auto w-[80%] my-6 p-4">
+                <section className="mx-auto w-[100%] md:w-[80%] my-6 p-4">
 
                     <h4 className="text-right"> Already have a account? <Link to={'/'} className='text-highlight' >Sign In</Link> </h4>
 
@@ -40,43 +75,38 @@ const Register = () => {
                             <div className="w-full space-y-8">
                                 <div>
                                     <small className="mt-3">Sign Up To Heliverse</small>
-                                    <h2 className="mt-1 text-3xl font-extrabold text-gray-900">Welcome ! Let's create your profile</h2>
+                                    <h2 className="mt-1 text-3xl font-extrabold text-gray-900">Welcome ! Let's Create  <span className='text-highlight' > Profile</span></h2>
                                 </div>
                                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                                     <div className="rounded-md shadow-sm -space-y-px">
 
                                         <div className="flex flex-wrap justify-between">
+
                                             <div className="w-full md:w-1/2 md:pr-2 mb-4">
 
-                                                <label htmlFor="first-name" className="">First Name</label>
-
-                                                <input id="first-name" name="first_name" type="text" autoComplete="given-name" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="John" value={form.first_name} onChange={handleChange} />
-
+<FormInputBox label={'First Name'} name={'first_name'} handleChange={handleChange} value={form.first_name} placeholder={'John'}  />
                                             </div>
 
 
                                             <div className="w-full md:w-1/2 md:pl-2 mb-4">
-                                                <label htmlFor="last-name" className="">Last Name</label>
-                                                <input id="last-name" name="last_name" type="text" autoComplete="family-name" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Doe" value={form.last_name} onChange={handleChange} />
-                                            </div>
+<FormInputBox label={'Last Name'} name={'last_name'} handleChange={handleChange} value={form.last_name} placeholder={'Doe'}  />
+                                        </div>
                                         </div>
 
-
-
-                                        <div className='mb-4'>
-                                            <label htmlFor="email-address" className="">Email address</label>
-                                            <input id="email-address" name="email" type="email" autoComplete="email" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="johndoe23@gmail.com" value={form.email} onChange={handleChange} />
-                                        </div>
+ <FormInputBox label={'Email'} name={'email'} handleChange={handleChange} value={form.email} placeholder={'johndoe23@gmail.com'} maxL={120} minL={5} type='email'   />                                    
 
                                         <div className="flex flex-wrap justify-between mt-4">
                                             <div className="w-full md:w-1/2 md:pr-2 mb-4">
-                                                <label htmlFor="password" >Password</label>
-                                                <input id="password" name="password" type="password" autoComplete="new-password" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="************" value={form.password} onChange={handleChange} />
+
+                                            <FormInputBox label={'password'}
+                                            name={'password'} handleChange={handleChange} value={form.password} minL={8} maxL={120} placeholder={'************'} type={'password'} />                                              
+                                               
                                             </div>
 
                                             <div className="w-full md:w-1/2 md:pl-2 mb-4">
-                                                <label htmlFor="confirm-password" >Confirm Password</label>
-                                                <input id="confirm-password" name="cpassword" type="password" autoComplete="new-password" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="**********" value={form.cassword} onChange={handleChange} />
+                                            <FormInputBox label={'Confirm Password'}
+                                            name={'cpassword'} handleChange={handleChange} value={form.cpassword} minL={8} maxL={120} placeholder={'************'} type={'password'} />
+
                                             </div>
                                         </div>
 
@@ -84,16 +114,14 @@ const Register = () => {
                                             <div className="w-full md:w-1/2 md:pr-2 mb-4">
                                                 <label htmlFor="gender" className="">Gender</label>
                                                 <select id="gender" name="gender" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" value={form.gender} onChange={handleChange}>
-                                                    <option value="">Select Gender</option>
-                                                    <option value="male">Male</option>
-                                                    <option value="female">Female</option>
-                                                    <option value="other">Other</option>
+                                                    <option value="Male">Male</option>
+                                                    <option value="Female">Female</option>
+                                                    <option value="Other">Other</option>
                                                 </select>
                                             </div>
 
                                             <div className="w-full md:w-1/2 md:pl-2 mb-4">
-                                                <label htmlFor="domain" className="">Domain</label>
-                                                <input id="domain" name="domain" type="text" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Domain" value={form.domain} onChange={handleChange} />
+                                                <FormInputBox label={'domain'} name={'domain'} minL={2} handleChange={handleChange} value={form.domain} placeholder={'Sales, Software etc.'} />
                                             </div>
                                         </div>
 
@@ -106,11 +134,13 @@ const Register = () => {
                                                 </select>
                                             </div>
 
-                                            <div className="w-full md:w-1/2 md:pr-2 mb-4 flex items-center justify-center">
-                                                <img className="w-30 h-10 rounded-full" src={avatar ? avatar : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmCS3uMVc54NYJHXFUSIUFZrI3Zp00EZ6KcA&s'} alt="avatar" />
+                                            <div className="w-full md:w-1/2 md:pr-2 mb-4 flex items-center justify-around md:justify-center ">
+                                                <img className="md:w-30 mx-2 w-[20%]  h-25 rounded-full" src={avatar ? avatar : 'https://via.placeholder.com/50'} alt="avatar" />
                                                 <div>
 
-                                                    <input id="avatar" name="file" type="file" accept="image/*" className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm " onChange={handleChangeFile} />
+                                                    <FormInputBox type='file' name={'file'} placeholder={''} handleChange={handleChangeFile} label={'Chose Profile'} />
+
+                                                    {/* <input id="avatar" name="file" type="file" accept="image/*" className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm " onChange={handleChangeFile} /> */}
                                                 </div>
                                             </div>
                                         </div>
@@ -118,9 +148,7 @@ const Register = () => {
                                     </div>
 
                                     <div>
-                                        <button type="submit" className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                            Sign up
-                                        </button>
+                                        <Button title={'Sign Up'} type='submit' loading={loading} />
                                     </div>
                                 </form>
                             </div>

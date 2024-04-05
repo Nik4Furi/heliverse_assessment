@@ -21,6 +21,8 @@ function UsersControllers() {
                 const { name, domain, gender, availability } = req.query;
 
                 let query = UsersModel.find();
+                const len = await UsersModel.find();
+               
 
                 if (name) {
                     query = query.or([
@@ -39,8 +41,10 @@ function UsersControllers() {
                     query = query.where('available').equals(availability === 'true');
 
                 const users = await query.limit(limit).skip(skip).exec();
+                const pageLastLimit = users?.length;
+                const totalPages = (Math.ceil(Number(len?.length) / Number(limit)))/2+2;
 
-                return res.status(200).json({ success: true, msg: 'fetch all the users', length: users.length, users })
+                return res.status(200).json({ success: true, msg: 'fetch all the users', length: users.length, users, totalPages,pageLastLimit })
 
             } catch (error) { return res.status(500).json({ success: false, msg: error.message }) }
         },
@@ -103,7 +107,7 @@ function UsersControllers() {
             try {
                 //--------- Req.body content
                 const { first_name, last_name, gender, domain, available } = req.body;
-
+                
                 if (first_name) req.user.first_name = first_name;
                 if (last_name) req.user.last_name = last_name;
                 // if (email) req.user.email = email;
@@ -141,7 +145,7 @@ function UsersControllers() {
                 const user = await UsersModel.findOneAndDelete({ _id: req.params._id });
                 if (!user) return res.status(404).json({ success: false, msg: "User not found" });
 
-                return res.status(200).json({ success: true, msg: 'Delete the user successfully', user });
+                return res.status(200).json({ success: true, msg: 'Delete the user successfully' });
 
             } catch (error) { return res.status(500).json({ success: false, msg: error.message }) }
         },
@@ -149,12 +153,11 @@ function UsersControllers() {
         //------------- Search the user, using GET '/api/users/search?name'
         async CreateTeam(req, res) {
             try {
-                const { title, description, memberIds } = req.body;
-
-                if (!title || !description || !memberIds.length) return res.status(404).json({ success: false, msg: "All fields are required" })
+                const { title, description, membersIds } = req.body;
+                if (!title || !description || !membersIds) return res.status(404).json({ success: false, msg: "All fields are required" })
 
                 const team = await TeamModel.create({
-                    title, description, members: memberIds, created_by: req.user._id
+                    title, description, members: membersIds, created_by: req.user._id
                 })
 
                 res.status(200).json({ success: true, msg: "Created the new team successfully", team });

@@ -2,9 +2,9 @@
 
 //-------------- Defining the types of the users
 const UserGenderTypes = Object.freeze({
-    MALE:'male',
-    FEMALE: 'female',
-    OTHER:'other'
+    MALE:'Male',
+    FEMALE: 'Female',
+    OTHER:'Other'
 })
 
 module.exports = {UserGenderTypes};
