@@ -42,7 +42,7 @@ function UsersControllers() {
 
                 const users = await query.limit(limit).skip(skip).exec();
                 const pageLastLimit = users?.length;
-                const totalPages = (Math.ceil(Number(len?.length) / Number(limit)))/2+2;
+                const totalPages = Math.ceil((Number(len?.length) / Number(limit))/2+2);
 
                 return res.status(200).json({ success: true, msg: 'fetch all the users', length: users.length, users, totalPages,pageLastLimit })
 
